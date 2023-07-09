@@ -7,7 +7,6 @@ import streamlit as st
 
 import io
 from streamlit_chat import message
-from audiorecorder import audiorecorder
 import requests
 
 import cv2
@@ -30,13 +29,6 @@ def char_sex(info):
         return f"👦🏻 {name}"
     else :
         return f"👧🏻 {name}"
-
-def stt(audio_bytes):
-    audio_file = io.BytesIO(audio_bytes)
-    files = {"audio_file" : ("audio.wav", audio_file, "audio/wav")}
-    response = requests.post(transcribe_url, files=files)
-    text = response.json()["text"]
-    return text
 
 def chat(text):
     if text != st.session_state["before_text"] :
@@ -417,20 +409,12 @@ if st.session_state["selected_name"] is not None:
                 
                 row1 = st.container()
                 row2 = st.container()
-                     
-                with row2 : 
-                    # input_text = st.text_input("You")
-                    # if input_text:
-                    #     chat(input_text)
-
-                    audio = audiorecorder("Click here to record", "Recording...")
-                    if len(audio) > 0:
-                        audio_bytes = audio.tobytes()
-                        # st.audio(audio_bytes)
+                
+                with row2:
+                    input_text = st.text_input("You")
+                    if input_text:
+                        chat(input_text)                   
                         
-                        text = stt(audio_bytes)
-                        chat(text)
-
                 with row1:
                     for i, msg_obj in enumerate(st.session_state['messages']):
                         msg = msg_obj["content"]
